@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import CssBaseline from "@mui/material/CssBaseline";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
-import { Avatar, Box, Button, Container, Icon, Stack } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Avatar, Button, Stack } from "@mui/material";
 import logo from "../assets/logo.png";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import decode from "jwt-decode";
 
 function ElevationScroll(props) {
     const { children, window } = props;
@@ -22,6 +23,31 @@ function ElevationScroll(props) {
 }
 
 const Header = () => {
+    const [user, setUser] = useState(
+        JSON.parse(localStorage.getItem("profile"))
+    );
+
+    const history = useHistory();
+    const location = useLocation();
+
+    const logout = () => {
+        console.log(user.user.token);
+        localStorage.clear();
+        history.push("/");
+        setUser(null);
+    };
+
+    useEffect(() => {
+        const token = user?.user.token;
+
+        if (token) {
+            const decodedToken = decode(token);
+            if (decodedToken.exp * 1000 < new Date().getTime()) logout();
+        }
+
+        setUser(JSON.parse(localStorage.getItem("profile")));
+    }, [location]);
+
     return (
         <header>
             <CssBaseline />
@@ -56,10 +82,29 @@ const Header = () => {
                             &nbsp;ATTENDY
                         </Typography>
 
-                        <Stack
-                            direction="row"
-                            spacing={{ xs: 2, sm: 6, lg: 8 }}
-                        >
+                        {user ? (
+                            <Stack
+                                direction="row"
+                                spacing={{ xs: 2, sm: 6, lg: 8 }}
+                            >
+                                <Avatar
+                                    alt={user.user.result.name}
+                                    src={user.user.result.imageUrl}
+                                >
+                                    {user.user.result.name.charAt(0)}
+                                </Avatar>
+                                <Typography variant="h6">
+                                    {user.user.result.name}
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={logout}
+                                >
+                                    Log out
+                                </Button>
+                            </Stack>
+                        ) : (
                             <Button
                                 color="inherit"
                                 variant="outlined"
@@ -72,7 +117,7 @@ const Header = () => {
                             >
                                 Sign in
                             </Button>
-                        </Stack>
+                        )}
                     </Toolbar>
                 </AppBar>
             </ElevationScroll>
