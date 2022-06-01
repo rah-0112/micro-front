@@ -1,12 +1,8 @@
-import { Container } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
+import Webcam from "./Webcam/Webcam";
 
 const StudentView = () => {
-    const [user, setUser] = useState(
-        JSON.parse(localStorage.getItem("profile"))
-    );
-    console.log(user);
-    return <Container>Hello</Container>;
+    return <Webcam />;
 };
 
 export default StudentView;

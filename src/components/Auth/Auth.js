@@ -99,7 +99,6 @@ const Auth = () => {
                         <ToggleButton value="Admin">Admin</ToggleButton>
                         <ToggleButton value="Student">Student</ToggleButton>
                     </ToggleButtonGroup>
-                    <Typography variant='h5'>{isSignUp ? 'Sign Up' : 'Sign In'}</Typography>
                     <form onSubmit={handleSumbit}>
                         <Grid container spacing={2}>
                             {isSignUp && (
